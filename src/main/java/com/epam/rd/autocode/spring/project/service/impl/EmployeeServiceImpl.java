@@ -1,6 +1,8 @@
 package com.epam.rd.autocode.spring.project.service.impl;
 
+import com.epam.rd.autocode.spring.project.dto.CreateEmployeeDTO;
 import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
+import com.epam.rd.autocode.spring.project.dto.UpdateEmployeeDTO;
 import com.epam.rd.autocode.spring.project.exception.AlreadyExistException;
 import com.epam.rd.autocode.spring.project.exception.NotFoundException;
 import com.epam.rd.autocode.spring.project.model.Employee;
@@ -56,19 +58,27 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeDTO updateEmployee(Long id, EmployeeDTO employeeDTO) {
+    public EmployeeDTO updateEmployee(Long id, UpdateEmployeeDTO employeeDTO) {
         log.info("Updating employee by id: {}", id);
 
         Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        if(!employee.getEmail().equals(employeeDTO.getEmail()) && userRepository.existsByEmail(employeeDTO.getEmail())) {
+        if(employeeDTO.getEmail() != null && !employee.getEmail().equals(employeeDTO.getEmail()) && userRepository.existsByEmail(employeeDTO.getEmail())) {
             throw new AlreadyExistException("Email " + employeeDTO.getEmail() + " already exists");
         }
 
-        employee.setEmail(employeeDTO.getEmail());
-        employee.setName(employeeDTO.getName());
-        employee.setBirthDate(employeeDTO.getBirthDate());
-        employee.setPhone(employeeDTO.getPhone());
+        if (employeeDTO.getEmail() != null) {
+            employee.setEmail(employeeDTO.getEmail());
+        }
+        if (employeeDTO.getName() != null) {
+            employee.setName(employeeDTO.getName());
+        }
+        if (employeeDTO.getBirthDate() != null) {
+            employee.setBirthDate(employeeDTO.getBirthDate());
+        }
+        if (employeeDTO.getPhone() != null) {
+            employee.setPhone(employeeDTO.getPhone());
+        }
 
         if(employeeDTO.getPassword() != null && !employeeDTO.getPassword().isBlank()) {
             employee.setPassword(passwordEncoder.encode(employeeDTO.getPassword()));
@@ -92,7 +102,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeDTO addEmployee(EmployeeDTO employeeDTO) {
+    public EmployeeDTO addEmployee(CreateEmployeeDTO employeeDTO) {
         log.info("Adding employee with email: {}", employeeDTO.getEmail());
 
         if(userRepository.existsByEmail(employeeDTO.getEmail())) {

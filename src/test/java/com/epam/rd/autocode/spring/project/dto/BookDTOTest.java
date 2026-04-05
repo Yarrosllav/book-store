@@ -102,7 +102,7 @@ public class BookDTOTest {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No parameter with type " + Constants.LANGUAGE_TYPE));
 
-        assertEquals(10, parameters.size());
+        assertEquals(Constants.BookDTO.PARAMETERS_IN_CONSTRUCTOR_WITH_PARAMETERS, parameters.size());
     }
 
     @Test

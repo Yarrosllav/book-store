@@ -1,6 +1,8 @@
 package com.epam.rd.autocode.spring.project.service;
 
 import com.epam.rd.autocode.spring.project.dto.ClientDTO;
+import com.epam.rd.autocode.spring.project.dto.RegisterClientDTO;
+import com.epam.rd.autocode.spring.project.dto.UpdateClientDTO;
 
 import java.util.List;
 
@@ -12,9 +14,9 @@ public interface ClientService {
 
     ClientDTO getClientById(Long id);
 
-    ClientDTO updateClient(Long id, ClientDTO client);
+    ClientDTO updateClient(Long id, UpdateClientDTO client);
 
     void deleteClient(Long id);
 
-    ClientDTO addClient(ClientDTO client);
+    ClientDTO addClient(RegisterClientDTO client);
 }

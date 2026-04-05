@@ -1,6 +1,7 @@
 package com.epam.rd.autocode.spring.project.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +12,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDTO{
+@Builder
+public class OrderDTO {
     private Long id;
     private String clientEmail;
     private String employeeEmail;

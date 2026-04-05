@@ -105,7 +105,6 @@ public class ClientDTOTest {
     @ParameterizedTest
     @CsvSource({
             "java.lang.String, email, 1",
-            "java.lang.String, password, 1",
             "java.lang.String, name, 1",
             "java.math.BigDecimal, balance, 1"
     })

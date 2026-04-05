@@ -1,5 +1,6 @@
 package com.epam.rd.autocode.spring.project.service.impl;
 
+import com.epam.rd.autocode.spring.project.dto.CreateOrderDTO;
 import com.epam.rd.autocode.spring.project.dto.OrderDTO;
 import com.epam.rd.autocode.spring.project.exception.NotFoundException;
 import com.epam.rd.autocode.spring.project.model.*;
@@ -50,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDTO addOrder(OrderDTO orderDTO) {
+    public OrderDTO addOrder(CreateOrderDTO orderDTO) {
         log.info("Adding order for client: {}", orderDTO.getClientEmail());
 
         Client client = clientRepository.findByEmail(orderDTO.getClientEmail())
@@ -101,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setEmployee(employee);
 
-        return mapper.map(order, OrderDTO.class);
+        return mapToDTO(order);
     }
 
     private OrderDTO mapToDTO(Order order) {

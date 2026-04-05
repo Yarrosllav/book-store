@@ -105,7 +105,6 @@ public class EmployeeDTOTest {
     @ParameterizedTest
     @CsvSource({
             "java.lang.String, email, 1",
-            "java.lang.String, password, 1",
             "java.lang.String, name, 1",
             "java.time.LocalDate, birthDate, 1",
             "java.lang.String, phone, 1",

@@ -1,6 +1,7 @@
 package com.epam.rd.autocode.spring.project.dto;
 
-import com.epam.rd.autocode.spring.project.model.enums.Role;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +13,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EmployeeDTO {
-    private Long id;
+public class UpdateEmployeeDTO {
+    @Email
     private String email;
+
+    @Size(min = 6)
+    private String password;
+
     private String name;
     private LocalDate birthDate;
     private String phone;
-    private Role role;
 }

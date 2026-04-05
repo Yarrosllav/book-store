@@ -1,6 +1,8 @@
 package com.epam.rd.autocode.spring.project.service.impl;
 
 import com.epam.rd.autocode.spring.project.dto.ClientDTO;
+import com.epam.rd.autocode.spring.project.dto.RegisterClientDTO;
+import com.epam.rd.autocode.spring.project.dto.UpdateClientDTO;
 import com.epam.rd.autocode.spring.project.exception.AlreadyExistException;
 import com.epam.rd.autocode.spring.project.exception.NotFoundException;
 import com.epam.rd.autocode.spring.project.model.Basket;
@@ -55,18 +57,24 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
-    public ClientDTO updateClient(Long id, ClientDTO clientDTO) {
+    public ClientDTO updateClient(Long id, UpdateClientDTO clientDTO) {
         log.info("Updating client by id: {}", id);
 
         Client client = clientRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        if(!client.getEmail().equals(clientDTO.getEmail()) && userRepository.existsByEmail(clientDTO.getEmail())) {
+        if(clientDTO.getEmail() != null && !client.getEmail().equals(clientDTO.getEmail()) && userRepository.existsByEmail(clientDTO.getEmail())) {
             throw new AlreadyExistException("Email " + clientDTO.getEmail() + " already exists");
         }
 
-        client.setEmail(clientDTO.getEmail());
-        client.setName(clientDTO.getName());
-        client.setBalance(clientDTO.getBalance());
+        if (clientDTO.getName() != null) {
+            client.setName(clientDTO.getName());
+        }
+        if (clientDTO.getEmail() != null) {
+            client.setEmail(clientDTO.getEmail());
+        }
+        if (clientDTO.getBalance() != null) {
+            client.setBalance(clientDTO.getBalance());
+        }
 
         if(clientDTO.getPassword() != null && !clientDTO.getPassword().isBlank()) {
             client.setPassword(passwordEncoder.encode(clientDTO.getPassword()));
@@ -87,7 +95,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
-    public ClientDTO addClient(ClientDTO clientDTO) {
+    public ClientDTO addClient(RegisterClientDTO clientDTO) {
         log.info("Adding client with email: {}", clientDTO.getEmail());
 
         if (userRepository.existsByEmail(clientDTO.getEmail())) {

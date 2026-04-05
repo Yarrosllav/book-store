@@ -1,6 +1,8 @@
 package com.epam.rd.autocode.spring.project.service.impl;
 
 import com.epam.rd.autocode.spring.project.dto.BookDTO;
+import com.epam.rd.autocode.spring.project.dto.CreateBookDTO;
+import com.epam.rd.autocode.spring.project.dto.UpdateBookDTO;
 import com.epam.rd.autocode.spring.project.exception.DuplicateBookException;
 import com.epam.rd.autocode.spring.project.exception.NotFoundException;
 import com.epam.rd.autocode.spring.project.model.Book;
@@ -38,22 +40,42 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDTO updateBookById(Long id, BookDTO book) {
+    public BookDTO updateBookById(Long id, UpdateBookDTO book) {
 
         log.info("Updating book by id: {}", id);
 
         Book bookToUpdate = bookRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        bookToUpdate.setName(book.getName());
-        bookToUpdate.setCharacteristics(book.getCharacteristics());
-        bookToUpdate.setPublicationDate(book.getPublicationDate());
-        bookToUpdate.setGenre(book.getGenre());
-        bookToUpdate.setDescription(book.getDescription());
-        bookToUpdate.setPages(book.getPages());
-        bookToUpdate.setAuthor(book.getAuthor());
-        bookToUpdate.setPrice(book.getPrice());
-        bookToUpdate.setLanguage(book.getLanguage());
-        bookToUpdate.setAgeGroup(book.getAgeGroup());
+        if (book.getName() != null) {
+            bookToUpdate.setName(book.getName());
+        }
+        if (book.getCharacteristics() != null) {
+            bookToUpdate.setCharacteristics(book.getCharacteristics());
+        }
+        if (book.getPublicationDate() != null) {
+            bookToUpdate.setPublicationDate(book.getPublicationDate());
+        }
+        if (book.getGenre() != null) {
+            bookToUpdate.setGenre(book.getGenre());
+        }
+        if (book.getDescription() != null) {
+            bookToUpdate.setDescription(book.getDescription());
+        }
+        if (book.getPages() != null) {
+            bookToUpdate.setPages(book.getPages());
+        }
+        if (book.getAuthor() != null) {
+            bookToUpdate.setAuthor(book.getAuthor());
+        }
+        if (book.getPrice() != null) {
+            bookToUpdate.setPrice(book.getPrice());
+        }
+        if (book.getLanguage() != null) {
+            bookToUpdate.setLanguage(book.getLanguage());
+        }
+        if (book.getAgeGroup() != null) {
+            bookToUpdate.setAgeGroup(book.getAgeGroup());
+        }
 
         return mapper.map(bookToUpdate, BookDTO.class);
     }
@@ -70,7 +92,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDTO addBook(BookDTO bookDTO) {
+    public BookDTO addBook(CreateBookDTO bookDTO) {
 
         log.info("Adding book with name: {}", bookDTO.getName());
 

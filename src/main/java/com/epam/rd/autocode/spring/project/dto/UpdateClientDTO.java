@@ -1,6 +1,8 @@
 package com.epam.rd.autocode.spring.project.dto;
 
-import com.epam.rd.autocode.spring.project.model.enums.Role;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +14,15 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ClientDTO {
-    private Long id;
+public class UpdateClientDTO {
+    @Email
     private String email;
+
+    @Size(min = 6)
+    private String password;
+
     private String name;
+
+    @DecimalMin(value = "0")
     private BigDecimal balance;
-    private Role role;
 }

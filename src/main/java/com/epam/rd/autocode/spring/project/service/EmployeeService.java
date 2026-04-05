@@ -1,6 +1,8 @@
 package com.epam.rd.autocode.spring.project.service;
 
+import com.epam.rd.autocode.spring.project.dto.CreateEmployeeDTO;
 import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
+import com.epam.rd.autocode.spring.project.dto.UpdateEmployeeDTO;
 
 import java.util.List;
 
@@ -12,9 +14,9 @@ public interface EmployeeService {
 
     EmployeeDTO getEmployeeById(Long id);
 
-    EmployeeDTO updateEmployee(Long id, EmployeeDTO employee);
+    EmployeeDTO updateEmployee(Long id, UpdateEmployeeDTO employee);
 
     void deleteEmployee(Long id);
 
-    EmployeeDTO addEmployee(EmployeeDTO employee);
+    EmployeeDTO addEmployee(CreateEmployeeDTO employee);
 }
