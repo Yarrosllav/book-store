@@ -10,9 +10,11 @@ public interface EmployeeService {
 
     EmployeeDTO getEmployeeByEmail(String email);
 
-    EmployeeDTO updateEmployeeByEmail(String email, EmployeeDTO employee);
+    EmployeeDTO getEmployeeById(Long id);
 
-    void deleteEmployeeByEmail(String email);
+    EmployeeDTO updateEmployee(Long id, EmployeeDTO employee);
+
+    void deleteEmployee(Long id);
 
     EmployeeDTO addEmployee(EmployeeDTO employee);
 }
