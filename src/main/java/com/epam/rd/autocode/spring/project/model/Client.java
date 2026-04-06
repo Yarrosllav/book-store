@@ -11,7 +11,11 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "CLIENTS")
 public class Client extends User{
+
     private BigDecimal balance;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean isBlocked = false;
 
     @OneToOne(mappedBy = "client", cascade = CascadeType.ALL)
     private Basket basket;

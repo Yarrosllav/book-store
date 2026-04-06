@@ -105,6 +105,12 @@ public class OrderServiceImpl implements OrderService {
         return mapToDTO(order);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderDTO> getWaitingOrders() {
+        return orderRepository.findByEmployeeIsNull().stream().map(this::mapToDTO).toList();
+    }
+
     private OrderDTO mapToDTO(Order order) {
         OrderDTO dto = mapper.map(order, OrderDTO.class);
 

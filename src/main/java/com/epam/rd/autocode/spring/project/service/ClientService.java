@@ -19,4 +19,8 @@ public interface ClientService {
     void deleteClient(Long id);
 
     ClientDTO addClient(RegisterClientDTO client);
+
+    void blockClient(Long id);
+    void unblockClient(Long id);
+
 }

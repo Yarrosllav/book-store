@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Реєстрація</title>
+</head>
+<body>
+
+<div layout:fragment="content" class="row justify-content-center">
+    <div class="col-md-5">
+        <h2 class="mb-4 text-center">Реєстрація клієнта</h2>
+
+        <form th:action="@{/register}" th:object="${client}" method="post" class="card p-4 shadow-sm">
+
+            <div class="mb-3">
+                <label class="form-label">Ім'я *</label>
+                <input type="text" th:field="*{name}" class="form-control" placeholder="Іван Іванов" />
+                <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger small"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email *</label>
+                <input type="email" th:field="*{email}" class="form-control" placeholder="name@example.com" />
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger small"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Пароль *</label>
+                <input type="password" th:field="*{password}" class="form-control" placeholder="Мінімум 6 символів" />
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger small"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">Зареєструватись</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a th:href="@{/login}">Вже є акаунт? Увійдіть</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

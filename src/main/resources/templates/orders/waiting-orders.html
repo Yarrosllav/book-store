@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Обробка замовлень</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h2 class="mb-4">📋 Нові замовлення (Очікують підтвердження)</h2>
+
+    <div th:if="${param.success == 'confirmed'}" class="alert alert-success">
+        Замовлення успішно взято в роботу!
+    </div>
+
+    <div th:if="${orders.isEmpty()}" class="alert alert-info">
+        Наразі немає нових замовлень.
+    </div>
+
+    <div th:if="${!orders.isEmpty()}">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th># ID</th>
+                <th>Дата та Час</th>
+                <th>Клієнт (Email)</th>
+                <th>Сума</th>
+                <th>Дії</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td fw-bold th:text="${order.id}">ID</td>
+                <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">Дата</td>
+                <td th:text="${order.clientEmail}">Email</td>
+                <td class="text-success fw-bold" th:text="${order.price} + ' грн'">Сума</td>
+                <td>
+                    <form th:action="@{/orders/{id}/confirm(id=${order.id})}" method="post">
+                        <button type="submit" class="btn btn-sm btn-success">Підтвердити</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

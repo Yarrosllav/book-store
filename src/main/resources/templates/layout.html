@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title layout:title-pattern="$CONTENT_TITLE - BookStore">BookStore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/books}">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect x="2" y="3" width="11" height="14" rx="1.5" fill="#7F77DD"/>
+                <rect x="7" y="3" width="11" height="14" rx="1.5" fill="#AFA9EC" opacity=".7"/>
+            </svg>
+            Bukva
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto gap-1">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/books}">Каталог</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('CLIENT')">
+                    <a class="nav-link" th:href="@{/basket}">🛒 Кошик</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('CLIENT')">
+                    <a class="nav-link" th:href="@{/orders/my}">Замовлення</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('EMPLOYEE')">
+                    <a class="nav-link text-warning" th:href="@{/books/add}">+ Додати книгу</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('EMPLOYEE')">
+                    <a class="nav-link text-warning" th:href="@{/orders/waiting}">Нові замовлення</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('EMPLOYEE')">
+                    <a class="nav-link text-info" th:href="@{/orders/processed}">Моя історія</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('EMPLOYEE')">
+                    <a class="nav-link text-info" th:href="@{/admin/clients}">Клієнти</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav align-items-center gap-2">
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link" th:href="@{/login}">Увійти</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/register}">Реєстрація</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link d-flex align-items-center gap-2" th:href="@{/profile}">
+                        <div style="width:28px;height:28px;border-radius:50%;background:#534AB7;display:flex;align-items:center;justify-content:center;font-size:11px;color:#CECBF6;font-weight:500;">
+                            <span sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 2).toUpperCase()}"></span>
+                        </div>
+                        <span sec:authentication="name"></span>
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Вийти</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container" layout:fragment="content">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title>Оброблені замовлення</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+  <h2 class="mb-4">✅ Замовлення, які ви обробили</h2>
+
+  <div th:if="${orders.isEmpty()}" class="alert alert-info">
+    Ви ще не обробили жодного замовлення. Зайдіть у "Нові замовлення", щоб взяти щось у роботу.
+  </div>
+
+  <div th:if="${!orders.isEmpty()}">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-dark">
+      <tr>
+        <th># ID</th>
+        <th>Дата створення</th>
+        <th>Клієнт (Email)</th>
+        <th>Сума</th>
+        <th>Статус</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${orders}">
+        <td class="fw-bold" th:text="${order.id}">ID</td>
+        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">Дата</td>
+        <td th:text="${order.clientEmail}">Клієнт</td>
+        <td class="text-success fw-bold" th:text="${order.price} + ' грн'">Сума</td>
+        <td>
+          <span class="badge bg-success">Підтверджено вами</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

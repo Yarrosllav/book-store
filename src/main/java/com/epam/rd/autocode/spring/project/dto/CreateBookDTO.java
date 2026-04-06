@@ -1,6 +1,7 @@
 package com.epam.rd.autocode.spring.project.dto;
 
 import com.epam.rd.autocode.spring.project.model.enums.AgeGroup;
+import com.epam.rd.autocode.spring.project.model.enums.Genre;
 import com.epam.rd.autocode.spring.project.model.enums.Language;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -23,7 +24,7 @@ public class CreateBookDTO {
     private String name;
 
     @NotBlank
-    private String genre;
+    private Genre genre;
 
     @NotNull
     private AgeGroup ageGroup;

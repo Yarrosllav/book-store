@@ -1,6 +1,7 @@
 package com.epam.rd.autocode.spring.project.dto;
 
 import com.epam.rd.autocode.spring.project.model.enums.AgeGroup;
+import com.epam.rd.autocode.spring.project.model.enums.Genre;
 import com.epam.rd.autocode.spring.project.model.enums.Language;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 public class BookDTO {
     private Long id;
     private String name;
-    private String genre;
+    private Genre genre;
     private AgeGroup ageGroup;
     private BigDecimal price;
     private LocalDate publicationDate;

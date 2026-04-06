@@ -1,6 +1,5 @@
 package com.epam.rd.autocode.spring.project.dto;
 
-import com.epam.rd.autocode.spring.project.model.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,14 +8,15 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class ClientDTO {
+public class BasketItemDTO {
     private Long id;
-    private String email;
-    private boolean isBlocked;
-    private String name;
-    private BigDecimal balance;
-    private Role role;
+    private Long bookId;
+    private String bookName;
+    private String author;
+    private BigDecimal price;
+    private Integer quantity;
+    private BigDecimal totalItemPrice;
 }

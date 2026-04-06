@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Мій Профіль</title>
+</head>
+<body>
+
+<div layout:fragment="content" class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">Мій Профіль</h2>
+
+        <div th:if="${param.success == 'updated'}" class="alert alert-success">Дані успішно оновлено!</div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title" th:text="${user.name}">Ім'я</h4>
+                <p class="text-muted" th:text="${user.email}">Email</p>
+                <hr>
+
+                <div th:if="${role == 'CLIENT'}">
+                    <p><strong>Мій Баланс:</strong> <span class="text-success fw-bold" th:text="${user.balance} + ' грн'"></span></p>
+                </div>
+
+                <div th:if="${role == 'EMPLOYEE'}">
+                    <p><strong>Телефон:</strong> <span th:text="${user.phone}"></span></p>
+                    <p><strong>Дата народження:</strong> <span th:text="${user.birthDate}"></span></p>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a th:href="@{/profile/edit}" class="btn btn-primary">Редагувати профіль</a>
+
+                    <form sec:authorize="hasRole('CLIENT')" th:action="@{/profile/delete}" method="post" onsubmit="return confirm('Ви впевнені, що хочете видалити акаунт навсегда?');">
+                        <button type="submit" class="btn btn-danger">Видалити акаунт</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

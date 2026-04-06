@@ -9,6 +9,7 @@ import com.epam.rd.autocode.spring.project.model.Basket;
 import com.epam.rd.autocode.spring.project.model.Client;
 import com.epam.rd.autocode.spring.project.model.enums.Role;
 import com.epam.rd.autocode.spring.project.repo.ClientRepository;
+import com.epam.rd.autocode.spring.project.repo.OrderRepository;
 import com.epam.rd.autocode.spring.project.repo.UserRepository;
 import com.epam.rd.autocode.spring.project.service.ClientService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper mapper;
 
@@ -72,13 +74,14 @@ public class ClientServiceImpl implements ClientService {
         if (clientDTO.getEmail() != null) {
             client.setEmail(clientDTO.getEmail());
         }
-        if (clientDTO.getBalance() != null) {
-            client.setBalance(clientDTO.getBalance());
+        if (clientDTO.getBalance() != null && clientDTO.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+            client.setBalance(client.getBalance().add(clientDTO.getBalance()));
         }
 
         if(clientDTO.getPassword() != null && !clientDTO.getPassword().isBlank()) {
             client.setPassword(passwordEncoder.encode(clientDTO.getPassword()));
         }
+        clientRepository.save(client);
 
         return mapper.map(client, ClientDTO.class);
     }
@@ -89,6 +92,7 @@ public class ClientServiceImpl implements ClientService {
         log.info("Deleting client by id: {}", id);
 
         Client client = clientRepository.findById(id).orElseThrow(NotFoundException::new);
+        orderRepository.deleteAllByClientId(id);
 
         clientRepository.delete(client);
     }
@@ -119,5 +123,21 @@ public class ClientServiceImpl implements ClientService {
         Client savedClient = clientRepository.save(client);
 
         return mapper.map(savedClient, ClientDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public void blockClient(Long id) {
+        Client client = clientRepository.findById(id).orElseThrow(NotFoundException::new);
+        client.setIsBlocked(true);
+        clientRepository.save(client);
+    }
+
+    @Override
+    @Transactional
+    public void unblockClient(Long id) {
+        Client client = clientRepository.findById(id).orElseThrow(NotFoundException::new);
+        client.setIsBlocked(false);
+        clientRepository.save(client);
     }
 }

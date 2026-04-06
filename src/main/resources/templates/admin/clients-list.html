@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head><title>Керування клієнтами</title></head>
+<body>
+<div layout:fragment="content">
+    <h2>Керування клієнтами</h2>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ім'я</th>
+            <th>Email</th>
+            <th>Баланс</th>
+            <th>Статус</th>
+            <th>Дії</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="client : ${clients}">
+            <td th:text="${client.id}"></td>
+            <td th:text="${client.name}"></td>
+            <td th:text="${client.email}"></td>
+            <td th:text="${client.balance} + ' грн'"></td>
+            <td>
+                <span th:if="${client.isBlocked}" class="badge bg-danger">Заблоковано</span>
+                <span th:unless="${client.isBlocked}" class="badge bg-success">Активний</span>
+            </td>
+            <td>
+                <form th:if="${!client.isBlocked}" th:action="@{/admin/clients/{id}/block(id=${client.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-warning btn-sm">Заблокувати</button>
+                </form>
+                <form th:if="${client.isBlocked}" th:action="@{/admin/clients/{id}/unblock(id=${client.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-info btn-sm">Розблокувати</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

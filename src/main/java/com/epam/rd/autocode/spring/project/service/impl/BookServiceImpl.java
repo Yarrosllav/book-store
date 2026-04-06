@@ -1,6 +1,7 @@
 package com.epam.rd.autocode.spring.project.service.impl;
 
 import com.epam.rd.autocode.spring.project.dto.BookDTO;
+import com.epam.rd.autocode.spring.project.dto.BookFilterDTO;
 import com.epam.rd.autocode.spring.project.dto.CreateBookDTO;
 import com.epam.rd.autocode.spring.project.dto.UpdateBookDTO;
 import com.epam.rd.autocode.spring.project.exception.DuplicateBookException;
@@ -11,10 +12,12 @@ import com.epam.rd.autocode.spring.project.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +29,19 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookDTO> getAllBooks() {
+    public Page<BookDTO> getAllBooks(BookFilterDTO filter, int page, int size, String sortBy, String sortDir) {
         log.info("Getting all books");
-        return bookRepository.findAll().stream().map(b -> mapper.map(b, BookDTO.class)).toList();
+
+        Sort sort = sortDir.equals("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        String search = (filter.getSearch() == null || filter.getSearch().isBlank()) ? null : filter.getSearch();
+
+
+        return bookRepository.findWithFilters(search, filter.getGenre(),
+                filter.getAgeGroup(), filter.getMinPrice(), filter.getMaxPrice(), pageable)
+                .map(book -> mapper.map(book, BookDTO.class));
     }
 
     @Override

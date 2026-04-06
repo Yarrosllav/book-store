@@ -11,4 +11,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findAllByClientEmail(String email);
     List<Order> findAllByEmployeeEmail(String email);
+    List<Order> findByEmployeeIsNull();
+    void deleteAllByClientId(Long id);
 }

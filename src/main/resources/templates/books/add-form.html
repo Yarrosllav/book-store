@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Додати книгу</title>
+</head>
+<body>
+
+<div layout:fragment="content" class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">Додавання нової книги</h2>
+
+        <form th:action="@{/books/add}" th:object="${book}" method="post" class="card p-4 shadow-sm">
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Назва книги *</label>
+                    <input type="text" th:field="*{name}" class="form-control" />
+                    <!-- Вивід помилки, якщо поле пусте -->
+                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger small"></div>
+                </div>
+                <div class="col">
+                    <label class="form-label">Автор *</label>
+                    <input type="text" th:field="*{author}" class="form-control" />
+                    <div th:if="${#fields.hasErrors('author')}" th:errors="*{author}" class="text-danger small"></div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="mb-3">
+                    <label class="form-label">Жанр</label>
+                    <select th:field="*{genre}" class="form-select">
+                        <option value="">Оберіть жанр</option>
+                        <option th:each="g : ${genres}"
+                                th:value="${g}"
+                                th:text="${g.displayName}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label class="form-label">Ціна (грн) *</label>
+                    <input type="number" step="0.01" th:field="*{price}" class="form-control" />
+                    <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-danger small"></div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Вікова група *</label>
+                    <select th:field="*{ageGroup}" class="form-select">
+                        <option value="CHILD">Дитяча</option>
+                        <option value="TEEN">Підліткова</option>
+                        <option value="ADULT">Доросла</option>
+                        <option value="OTHER">Інше</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label class="form-label">Мова *</label>
+                    <select th:field="*{language}" class="form-select">
+                        <option value="UKRAINIAN">Українська</option>
+                        <option value="ENGLISH">Англійська</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Дата публікації *</label>
+                    <input type="date" th:field="*{publicationDate}" class="form-control" />
+                </div>
+                <div class="col">
+                    <label class="form-label">Кількість сторінок *</label>
+                    <input type="number" th:field="*{pages}" class="form-control" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Опис</label>
+                <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <a th:href="@{/books}" class="btn btn-secondary me-2">Скасувати</a>
+                <button type="submit" class="btn btn-success">Зберегти книгу</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

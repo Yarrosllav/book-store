@@ -14,4 +14,6 @@ public interface OrderService {
     OrderDTO addOrder(CreateOrderDTO order);
 
     OrderDTO confirmOrder(Long id, String employeeEmail);
+
+    List<OrderDTO> getWaitingOrders();
 }

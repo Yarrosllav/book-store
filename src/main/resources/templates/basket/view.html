@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Мій Кошик</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h2 class="mb-4">🛒 Мій Кошик</h2>
+
+    <div th:if="${param.success == 'removed'}" class="alert alert-warning">Книгу видалено з кошика.</div>
+
+    <div th:if="${basket.items.isEmpty()}" class="alert alert-info">
+        Ваш кошик наразі порожній. <a th:href="@{/books}">Перейти до каталогу</a>.
+    </div>
+
+    <div th:if="${!basket.items.isEmpty()}">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th>Назва книги</th>
+                <th>Автор</th>
+                <th>Кількість</th>
+                <th>Ціна за шт.</th>
+                <th>Сума</th>
+                <th>Дії</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${basket.items}">
+                <td th:text="${item.bookName}">Назва</td>
+                <td th:text="${item.author}">Автор</td>
+                <td th:text="${item.quantity} + ' шт.'">К-сть</td>
+                <td th:text="${item.price} + ' грн'">Ціна</td>
+                <td class="fw-bold" th:text="${item.totalItemPrice} + ' грн'">Сума</td>
+                <td>
+                    <form th:action="@{/basket/remove/{itemId}(itemId=${item.id})}" method="post">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="4" class="text-end fw-bold fs-5">Загальна сума:</td>
+                <td colspan="2" class="fw-bold fs-5 text-success" th:text="${basket.totalPrice} + ' грн'">0 грн</td>
+            </tr>
+            </tfoot>
+        </table>
+
+        <div class="d-flex justify-content-end mt-4">
+            <form th:action="@{/orders/checkout}" method="post">
+                <button type="submit" class="btn btn-success btn-lg">Оформити замовлення</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

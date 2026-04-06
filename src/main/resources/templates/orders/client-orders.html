@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Мої замовлення</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h2 class="mb-4">📦 Мої замовлення</h2>
+
+    <div th:if="${param.success == 'orderPlaced'}" class="alert alert-success">
+        Ваше замовлення успішно оформлено! Очікуйте на підтвердження.
+    </div>
+
+    <div th:if="${orders.isEmpty()}" class="alert alert-info">
+        У вас ще немає замовлень. <a th:href="@{/books}">Перейти до каталогу</a>.
+    </div>
+
+    <div th:if="${!orders.isEmpty()}">
+        <div class="card mb-3 shadow-sm" th:each="order : ${orders}">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <strong>Замовлення #[[${order.id}]]</strong>
+                <span class="text-muted" th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">Дата</span>
+            </div>
+            <div class="card-body">
+                <p><strong>Сума:</strong> <span class="text-success fw-bold" th:text="${order.price} + ' грн'"></span></p>
+
+                <p><strong>Статус:</strong>
+                    <span th:if="${order.employeeEmail == null}" class="badge bg-warning text-dark">Очікує підтвердження</span>
+                    <span th:if="${order.employeeEmail != null}" class="badge bg-success">Підтверджено</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
