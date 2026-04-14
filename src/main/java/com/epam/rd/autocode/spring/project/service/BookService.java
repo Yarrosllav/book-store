@@ -2,8 +2,6 @@ package com.epam.rd.autocode.spring.project.service;
 
 import com.epam.rd.autocode.spring.project.dto.BookDTO;
 import com.epam.rd.autocode.spring.project.dto.BookFilterDTO;
-import com.epam.rd.autocode.spring.project.dto.CreateBookDTO;
-import com.epam.rd.autocode.spring.project.dto.UpdateBookDTO;
 import org.springframework.data.domain.Page;
 
 public interface BookService {
@@ -12,9 +10,10 @@ public interface BookService {
 
     BookDTO getBookById(Long id);
 
-    BookDTO updateBookById(Long id, UpdateBookDTO book);
+    BookDTO updateBookById(Long id, BookDTO book);
 
-    void deleteBook(Long id);
+    void archiveBook(Long id);
 
-    BookDTO addBook(CreateBookDTO book);
+    BookDTO addBook(BookDTO book);
+
 }

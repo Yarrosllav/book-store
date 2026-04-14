@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -18,7 +17,6 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
     private String name;
     @Enumerated(EnumType.STRING)
     private Genre genre;
@@ -26,10 +24,10 @@ public class Book {
     @Column(name = "age_group")
     private AgeGroup ageGroup;
     private BigDecimal price;
-    private LocalDate publicationDate;
+    private Integer publicationYear;
+    private Boolean isAvailable = true;
     private String author;
     private Integer pages;
-    private String characteristics;
     private String description;
     @Enumerated(EnumType.STRING)
     private Language language;

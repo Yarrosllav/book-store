@@ -21,7 +21,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Page<Book> findAll(Pageable pageable);
 
     @Query("""
-    SELECT b FROM Book b WHERE
+    SELECT b FROM Book b WHERE b.isAvailable = true AND
     (:search IS NULL OR LOWER(b.name) LIKE LOWER(CONCAT('%', :search, '%'))
                      OR LOWER(b.author) LIKE LOWER(CONCAT('%', :search, '%')))
     AND (:genre IS NULL OR b.genre = :genre)

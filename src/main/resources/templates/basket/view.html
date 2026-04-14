@@ -3,60 +3,80 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Мій Кошик</title>
+    <title th:text="#{basket.title}"></title>
 </head>
 <body>
 
 <div layout:fragment="content">
-    <h2 class="mb-4">🛒 Мій Кошик</h2>
 
-    <div th:if="${param.success == 'removed'}" class="alert alert-warning">Книгу видалено з кошика.</div>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <h2 class="mb-4" th:text="#{basket.title}"></h2>
+
+    <div th:if="${param.success == 'removed'}" class="alert alert-warning" th:text="#{basket.msg.removed}"></div>
 
     <div th:if="${basket.items.isEmpty()}" class="alert alert-info">
-        Ваш кошик наразі порожній. <a th:href="@{/books}">Перейти до каталогу</a>.
+        <span th:text="#{basket.empty}"></span> <a th:href="@{/books}" th:text="#{basket.go_to_catalog}"></a>.
     </div>
 
     <div th:if="${!basket.items.isEmpty()}">
         <table class="table table-hover align-middle">
             <thead class="table-dark">
             <tr>
-                <th>Назва книги</th>
-                <th>Автор</th>
-                <th>Кількість</th>
-                <th>Ціна за шт.</th>
-                <th>Сума</th>
-                <th>Дії</th>
+                <th th:text="#{table.book_name}"></th>
+                <th th:text="#{table.author}"></th>
+                <th th:text="#{table.quantity}"></th>
+                <th th:text="#{table.price_per_item}"></th>
+                <th th:text="#{table.total}"></th>
+                <th th:text="#{table.actions}"></th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="item : ${basket.items}">
-                <td th:text="${item.bookName}">Назва</td>
-                <td th:text="${item.author}">Автор</td>
-                <td th:text="${item.quantity} + ' шт.'">К-сть</td>
-                <td th:text="${item.price} + ' грн'">Ціна</td>
-                <td class="fw-bold" th:text="${item.totalItemPrice} + ' грн'">Сума</td>
+                <td th:text="${item.bookName}"></td>
+                <td th:text="${item.author}"></td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <form th:action="@{/basket/update/{itemId}(itemId=${item.id})}" method="post">
+                            <input type="hidden" name="delta" value="-1">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">-</button>
+                        </form>
+
+                        <span class="fw-bold" th:text="${item.quantity}"></span>
+
+                        <form th:action="@{/basket/update/{itemId}(itemId=${item.id})}" method="post">
+                            <input type="hidden" name="delta" value="1">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">+</button>
+                        </form>
+                    </div>
+                </td>
+                <td th:text="${item.price} + ' ' + #{currency.uah}"></td>
+                <td class="fw-bold" th:text="${item.totalItemPrice} + ' ' + #{currency.uah}"></td>
                 <td>
                     <form th:action="@{/basket/remove/{itemId}(itemId=${item.id})}" method="post">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">Видалити</button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger" th:text="#{btn.delete}"></button>
                     </form>
                 </td>
             </tr>
             </tbody>
             <tfoot>
             <tr>
-                <td colspan="4" class="text-end fw-bold fs-5">Загальна сума:</td>
-                <td colspan="2" class="fw-bold fs-5 text-success" th:text="${basket.totalPrice} + ' грн'">0 грн</td>
+                <td colspan="4" class="text-end fw-bold fs-5" th:text="#{basket.total_sum}"></td>
+                <td colspan="2" class="fw-bold fs-5 text-success" th:text="${basket.totalPrice} + ' ' + #{currency.uah}"></td>
             </tr>
             </tfoot>
         </table>
 
         <div class="d-flex justify-content-end mt-4">
             <form th:action="@{/orders/checkout}" method="post">
-                <button type="submit" class="btn btn-success btn-lg">Оформити замовлення</button>
+                <button type="submit" class="btn btn-success btn-lg" th:text="#{btn.checkout}"></button>
             </form>
         </div>
     </div>
 </div>
+
 
 </body>
 </html>

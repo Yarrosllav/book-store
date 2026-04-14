@@ -42,4 +42,13 @@ public class BasketController {
         return "redirect:/basket?success=removed";
     }
 
+    @PostMapping("/update/{itemid}")
+    public String updateQuantity(
+            @PathVariable Long itemid,
+            @RequestParam Integer delta,
+            @AuthenticationPrincipal UserDetails currentUser
+    ){
+        basketService.updateQuantity(currentUser.getUsername(), itemid, delta);
+        return "redirect:/basket";
+    }
 }

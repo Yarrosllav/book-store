@@ -3,40 +3,120 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-  <title>Оброблені замовлення</title>
+  <title th:text="#{orders.processed.title}"></title>
 </head>
 <body>
 
 <div layout:fragment="content">
-  <h2 class="mb-4">✅ Замовлення, які ви обробили</h2>
+  <h2 class="mb-4" th:text="#{orders.processed.header}"></h2>
 
-  <div th:if="${orders.isEmpty()}" class="alert alert-info">
-    Ви ще не обробили жодного замовлення. Зайдіть у "Нові замовлення", щоб взяти щось у роботу.
-  </div>
+  <div th:if="${param.success == 'refunded'}" class="alert alert-warning" th:text="#{orders.cancelled.success}"></div>
+
+  <form th:action="@{/orders/processed}" method="get" class="mb-4 row g-2 align-items-center">
+    <div class="col-auto">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
+            <circle cx="6.5" cy="6.5" r="4"/><path d="M11 11l3 3"/>
+          </svg>
+        </span>
+        <input type="text" name="search" th:value="${search}"
+               class="form-control border-start-0"
+               th:placeholder="#{orders.search_bu_email}">
+      </div>
+    </div>
+
+    <div class="col-auto">
+      <div class="form-check mb-0">
+        <input class="form-check-input" type="checkbox" name="onlyMy" value="true"
+               id="onlyMyCheck" th:checked="${onlyMy}">
+        <label class="form-check-label" for="onlyMyCheck" th:text="#{orders.only_my}"></label>
+      </div>
+    </div>
+
+    <div class="col-auto">
+      <select name="sortDir" class="form-select">
+        <option value="desc" th:selected="${sortDir == 'desc'}" th:text="#{orders.new_first}"></option>
+        <option value="asc"  th:selected="${sortDir == 'asc'}"  th:text="#{orders.old_first}"></option>
+      </select>
+    </div>
+
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary" th:text="#{btn.search}"></button>
+      <a th:href="@{/orders/processed}" class="btn btn-outline-secondary" th:text="#{btn.reset}"></a>
+    </div>
+  </form>
+
+  <div th:if="${orders.isEmpty()}" class="alert alert-info" th:text="#{orders.processed.empty}"></div>
 
   <div th:if="${!orders.isEmpty()}">
-    <table class="table table-striped table-hover align-middle">
+    <table class="table table-striped table-hover align-middle shadow-sm">
       <thead class="table-dark">
       <tr>
-        <th># ID</th>
-        <th>Дата створення</th>
-        <th>Клієнт (Email)</th>
-        <th>Сума</th>
-        <th>Статус</th>
+        <th th:text="#{table.id}"></th>
+        <th th:text="#{table.date_created}"></th>
+        <th th:text="#{table.client_email}"></th>
+        <th th:text="#{table.sum}"></th>
+        <th th:text="#{table.status}"></th>
+        <th th:text="#{table.actions}"></th>
       </tr>
       </thead>
       <tbody>
       <tr th:each="order : ${orders}">
-        <td class="fw-bold" th:text="${order.id}">ID</td>
-        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">Дата</td>
-        <td th:text="${order.clientEmail}">Клієнт</td>
-        <td class="text-success fw-bold" th:text="${order.price} + ' грн'">Сума</td>
+        <td class="fw-bold" th:text="${order.id}"></td>
+        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}"></td>
+        <td th:text="${order.clientEmail}"></td>
+        <td class="text-success fw-bold" th:text="${order.price} + ' ' + #{currency.uah}"></td>
         <td>
-          <span class="badge bg-success">Підтверджено вами</span>
+          <span th:classappend="${order.status.name() == 'CONFIRMED'} ? 'badge bg-success' : 'badge bg-danger'"
+                th:text="#{${order.status.messageKey}}"></span>
+          <div th:if="${order.employeeEmail != #authentication.name}" class="small text-muted mt-1">
+            <span th:text="#{orders.processed} + ' '"></span>
+            <span th:text="${order.employeeEmail}"></span>
+          </div>
+        </td>
+        <td>
+          <div class="d-flex gap-2">
+            <a th:href="@{/orders/{id}(id=${order.id})}"
+               class="btn btn-sm btn-outline-primary"
+               th:text="#{order.contains}"></a>
+
+            <form th:if="${order.employeeEmail == #authentication.name and order.status.name() == 'CONFIRMED'}"
+                  th:action="@{/orders/{id}/refund(id=${order.id})}" method="post">
+              <button type="submit" class="btn btn-sm btn-outline-danger"
+                      th:data-confirm-msg="#{order.cancellation.question}"
+                      onclick="return confirm(this.getAttribute('data-confirm-msg'));"
+                      th:text="#{btn.cancel}"></button>
+            </form>
+          </div>
         </td>
       </tr>
       </tbody>
     </table>
+
+    <nav th:if="${totalPages > 1}" class="mt-4">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+          <a class="page-link"
+             th:href="@{/orders/processed(page=${currentPage > 0 ? currentPage - 1 : 0}, search=${search}, onlyMy=${onlyMy}, sortDir=${sortDir})}">
+            &laquo;
+          </a>
+        </li>
+        <li class="page-item"
+            th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+            th:classappend="${i == currentPage} ? 'active'">
+          <a class="page-link"
+             th:href="@{/orders/processed(page=${i}, search=${search}, onlyMy=${onlyMy}, sortDir=${sortDir})}"
+             th:text="${i + 1}"></a>
+        </li>
+        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+          <a class="page-link"
+             th:href="@{/orders/processed(page=${currentPage + 1}, search=${search}, onlyMy=${onlyMy}, sortDir=${sortDir})}">
+            &raquo;
+          </a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </div>
 

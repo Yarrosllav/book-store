@@ -3,44 +3,33 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Вхід</title>
+    <title th:text="#{login.title}"></title>
 </head>
 <body>
 
 <div layout:fragment="content" class="row justify-content-center">
     <div class="col-md-4">
-        <h2 class="mb-4 text-center">Авторизація</h2>
+        <h2 class="mb-4 text-center" th:text="#{login.header}"></h2>
 
-        <div th:if="${param.error != null and param.error.toString().contains('locked')}" class="alert alert-warning">
-            Ваш акаунт заблоковано.
-        </div>
-        <div th:if="${param.error != null and param.error.toString().contains('true')}" class="alert alert-danger">
-            Невірний email або пароль.
-        </div>
-
-        <div th:if="${param.logout}" class="alert alert-success">
-            Ви успішно вийшли з системи.
-        </div>
-
-        <div th:if="${param.success}" class="alert alert-success">
-            Реєстрація успішна! Тепер ви можете увійти.
-        </div>
+        <div th:if="${param.error != null and param.error.toString().contains('locked')}" class="alert alert-warning" th:text="#{login.error.locked}"></div>
+        <div th:if="${param.error != null and param.error.toString().contains('true')}" class="alert alert-danger" th:text="#{login.error.credentials}"></div>
+        <div th:if="${param.logout}" class="alert alert-success" th:text="#{login.success.logout}"></div>
+        <div th:if="${param.success}" class="alert alert-success" th:text="#{login.success.register}"></div>
 
         <form th:action="@{/process_login}" method="post" class="card p-4 shadow-sm">
             <div class="mb-3">
-                <label class="form-label">Email</label>
-
+                <label class="form-label" th:text="#{label.email}"></label>
                 <input type="email" name="username" class="form-control" required autofocus/>
             </div>
             <div class="mb-3">
-                <label class="form-label">Пароль</label>
+                <label class="form-label" th:text="#{label.password}"></label>
                 <input type="password" name="password" class="form-control" required/>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Увійти</button>
+            <button type="submit" class="btn btn-primary w-100" th:text="#{btn.login}"></button>
         </form>
 
         <div class="text-center mt-3">
-            <a th:href="@{/register}">Немає акаунту? Зареєструйтесь!</a>
+            <a th:href="@{/register}" th:text="#{login.no_account}"></a>
         </div>
     </div>
 </div>

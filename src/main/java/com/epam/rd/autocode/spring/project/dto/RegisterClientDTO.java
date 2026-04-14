@@ -8,23 +8,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class RegisterClientDTO {
-    @NotBlank
-    @Email
+    @NotBlank(message = "{error.validation.notblank}")
+    @Email(message = "{error.validation.email}")
     private String email;
 
-    @NotBlank
-    @Size(min = 6)
+    @NotBlank(message = "{error.validation.notblank}")
+    @Size(min = 6, message = "{error.validation.password_size}")
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "{error.validation.notblank}")
     private String name;
 
-    private BigDecimal balance;
 }

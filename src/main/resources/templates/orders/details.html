@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="#{order.details}"></title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="mb-4">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm" th:text="#{nav.back}"></a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0" th:text="#{order.number_detailed(${order.id})}"></h4>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 th:text="#{order.information}"></h5>
+                    <p class="mb-1">
+                        <strong th:text="#{order.client}"></strong>
+                        <span th:text="${order.clientEmail}"></span>
+                    </p>
+                    <p class="mb-1">
+                        <strong th:text="#{order.date}"></strong>
+                        <span th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}"></span>
+                    </p>
+                    <p class="mb-1">
+                        <strong th:text="#{order.status}"></strong>
+                        <span th:classappend="${order.status.name() == 'PENDING'
+                                ? 'badge bg-warning text-dark'
+                                : (order.status.name() == 'CONFIRMED'
+                                    ? 'badge bg-success'
+                                    : 'badge bg-danger')}"
+                              th:text="#{${order.status.messageKey}}"></span>
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5 th:text="#{order.sum_to_pay}"></h5>
+                    <h2 class="text-success fw-bold"
+                        th:text="${order.price} + ' ' + #{currency.uah}"></h2>
+                </div>
+            </div>
+
+            <h5 th:text="#{order.contains}"></h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th th:text="#{table.book_name}"></th>
+                        <th class="text-center" th:text="#{table.quantity}"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${order.bookItems}">
+                        <td>
+                            <a th:href="@{/books/{id}(id=${item.bookId})}"
+                               th:text="${item.bookName}"
+                               class="text-decoration-none fw-bold text-primary"></a>
+                        </td>
+                        <td class="text-center"
+                            th:text="${item.quantity} + ' ' + #{unit.pcs}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

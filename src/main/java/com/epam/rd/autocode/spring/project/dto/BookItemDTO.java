@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookItemDTO {
     private Long id;
+    private Long bookId;
     private String bookName;
     private Integer quantity;
 }

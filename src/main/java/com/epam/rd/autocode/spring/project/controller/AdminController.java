@@ -1,17 +1,16 @@
 package com.epam.rd.autocode.spring.project.controller;
 
+import com.epam.rd.autocode.spring.project.dto.ClientDTO;
 import com.epam.rd.autocode.spring.project.service.ClientService;
-import com.epam.rd.autocode.spring.project.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/admin/clients")
@@ -19,11 +18,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @PreAuthorize("hasRole('EMPLOYEE')")
 public class AdminController {
     private final ClientService clientService;
-    private final OrderService orderService;
 
     @GetMapping
-    public String getAllClients(Model model){
-        model.addAttribute("clients", clientService.getAllClients());
+    public String getAllClients(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            Model model){
+
+        Pageable pageable = PageRequest.of(page, 15, Sort.by("id").descending());
+        Page<ClientDTO> clientsPage = clientService.searchClients(search, pageable);
+
+        model.addAttribute("clients", clientsPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", clientsPage.getTotalPages());
+        model.addAttribute("search", search);
         return "admin/clients-list";
     }
 
@@ -38,14 +46,4 @@ public class AdminController {
         clientService.unblockClient(id);
         return "redirect:/admin/clients?success=unblocked";
     }
-
-    @GetMapping("/history")
-    public String myOrders(@AuthenticationPrincipal UserDetails currentUser, Model model){
-        model.addAttribute("orders", orderService.getOrdersByEmployee(currentUser.getUsername()));
-        return "admin/orders-history";
-    }
-
-
-
-
 }

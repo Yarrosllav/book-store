@@ -4,54 +4,58 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title th:text="${book.name}">Деталі книги</title>
+    <title th:text="${book.name}"></title>
 </head>
 <body>
 
 <div layout:fragment="content">
     <div class="mb-3">
-        <a th:href="@{/books}" class="btn btn-outline-secondary btn-sm">&larr; Назад до каталогу</a>
+        <a th:href="@{/books}" class="btn btn-outline-secondary btn-sm" th:text="#{btn.back_to_catalog}"></a>
     </div>
 
-    <div th:if="${param.success == 'updated'}" class="alert alert-success">Книгу успішно оновлено!</div>
+    <div th:if="${param.success == 'updated'}" class="alert alert-success" th:text="#{msg.book_updated}"></div>
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <h2 class="card-title" th:text="${book.name}">Назва</h2>
-            <h4 class="text-muted mb-4" th:text="${book.author}">Автор</h4>
+            <h2 class="card-title" th:text="${book.name}"></h2>
+            <h4 class="text-muted mb-4" th:text="${book.author}"></h4>
 
             <div class="row mb-4">
                 <div class="col-md-6">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>Жанр:</strong> <span th:text="${book.genre}"></span></li>
-                        <li class="list-group-item"><strong>Вікова група:</strong> <span th:text="${book.ageGroup}"></span></li>
-                        <li class="list-group-item"><strong>Мова:</strong> <span th:text="${book.language}"></span></li>
-                        <li class="list-group-item"><strong>К-сть сторінок:</strong> <span th:text="${book.pages}"></span></li>
-                        <li class="list-group-item"><strong>Дата публікації:</strong> <span th:text="${book.publicationDate}"></span></li>
+                        <li class="list-group-item"><strong th:text="#{book.genre}"></strong> <span th:text="#{${book.getGenre().getMessageKey()}}"></span></li>
+                        <li class="list-group-item"><strong th:text="#{book.age_group}"></strong> <span th:text="#{${book.getAgeGroup().getMessageKey()}}"></span></li>
+                        <li class="list-group-item"><strong th:text="#{book.language}"></strong> <span th:text="#{${book.getLanguage().getMessageKey()}}"></span></li>
+                        <li class="list-group-item"><strong th:text="#{book.pages}"></strong> <span th:text="${book.pages}"></span></li>
+                        <li class="list-group-item"><strong th:text="#{book.pub_year}"></strong> <span th:text="${book.publicationYear}"></span></li>
                     </ul>
                 </div>
                 <div class="col-md-6 text-center d-flex flex-column justify-content-center align-items-center">
-                    <h3 class="text-success fw-bold display-6 mb-3" th:text="${book.price} + ' грн'">Ціна</h3>
+                    <h3 class="text-success fw-bold display-6 mb-3" th:text="${book.price} + ' ' + #{currency.uah}"></h3>
 
                     <form sec:authorize="hasRole('CLIENT')" th:action="@{/basket/add/{id}(id=${book.id})}" method="post" class="d-flex">
                         <input type="number" name="quantity" value="1" min="1" class="form-control me-2" style="width: 80px;">
-                        <button type="submit" class="btn btn-primary btn-lg">Додати в кошик</button>
+                        <button type="submit" class="btn btn-primary btn-lg" th:text="#{btn.add_to_basket}"></button>
                     </form>
 
                     <div sec:authorize="hasRole('EMPLOYEE')">
-                        <a th:href="@{/books/{id}/edit(id=${book.id})}" class="btn btn-warning">Редагувати</a>
+                        <a th:href="@{/books/{id}/edit(id=${book.id})}"
+                           class="btn btn-sm"
+                           style="background:transparent;border:0.5px solid #AFA9EC;color:#7F77DD;"
+                           th:text="#{btn.edit}"></a>
                         <form th:action="@{/books/{id}/delete(id=${book.id})}" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Видалити книгу?');">Видалити</button>
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    style="background:transparent;border:0.5px solid rgba(226,75,74,.5);color:#E24B4A;"
+                                    th:data-confirm-msg="#{confirm.delete_book}"
+                                    onclick="return confirm(this.getAttribute('data-confirm-msg'));"
+                                    th:text="#{btn.delete_short}"></button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <h5>Опис:</h5>
-            <p th:text="${book.description}">Немає опису</p>
-
-            <h5 class="mt-4">Характеристики:</h5>
-            <p th:text="${book.characteristics}">Не вказано</p>
+            <h5 th:text="#{book.description.title}"></h5>
+            <p th:text="${not #strings.isEmpty(book.description)} ? ${book.description} : #{book.no_description}"></p>
         </div>
     </div>
 </div>

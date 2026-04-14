@@ -16,10 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @Controller
 @RequestMapping("/profile")
@@ -57,7 +56,7 @@ public class ProfileController {
 
         if(isClient){
             ClientDTO client = clientService.getClientByEmail(email);
-            UpdateClientDTO updateDto = new UpdateClientDTO(client.getEmail(), null, client.getName(), false, client.getBalance());
+            UpdateClientDTO updateDto = new UpdateClientDTO(client.getEmail(), null, client.getName(), false);
             model.addAttribute("clientDto", updateDto);
             return "profile/edit-client";
         }else{
@@ -74,10 +73,12 @@ public class ProfileController {
     @PostMapping("/edit/client")
     public String editClientProfile(@AuthenticationPrincipal UserDetails currentUser,
                                     @Valid @ModelAttribute("clientDto") UpdateClientDTO clientDto,
-                                    BindingResult result){
+                                    BindingResult result,
+                                    Model model){
 
         if(result.hasErrors()) {
-            result.getAllErrors().forEach(e -> System.out.println("Error: " + e));
+            clientDto.setEmail(currentUser.getUsername());
+            model.addAttribute("clientDto", clientDto);
             return "profile/edit-client";
         }
 
@@ -98,14 +99,24 @@ public class ProfileController {
 
     }
 
+    @PreAuthorize("hasRole('CLIENT')")
+    @PostMapping("/balance/topup")
+    public String topUpBalance(@AuthenticationPrincipal UserDetails currentUser,
+                               @RequestParam BigDecimal amount,HttpServletRequest request) throws ServletException {
+        clientService.topUpBalance(currentUser.getUsername(), amount);
+
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/books");
+    }
+
     @PreAuthorize("hasRole('EMPLOYEE')")
     @PostMapping("/edit/employee")
     public String editEmployeeProfile(@AuthenticationPrincipal UserDetails currentUser,
                                      @Valid @ModelAttribute("employeeDto") UpdateEmployeeDTO employeeDto,
-                                     BindingResult result){
+                                     BindingResult result,
+                                      Model model){
 
         if(result.hasErrors()) {
-            result.getAllErrors().forEach(e -> System.out.println("Error: " + e));
             return "profile/edit-employee";
         }
 

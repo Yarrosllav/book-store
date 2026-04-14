@@ -3,51 +3,86 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Редагування книги</title>
+    <title th:text="#{book.edit.title}"></title>
 </head>
 <body>
 
 <div layout:fragment="content" class="row justify-content-center">
     <div class="col-md-8">
-        <h2 class="mb-4">Редагування книги</h2>
+        <h2 class="mb-4" th:text="#{book.edit.header}"></h2>
 
         <form th:action="@{/books/{id}/edit(id=${book.id})}" th:object="${book}" method="post" class="card p-4 shadow-sm">
+
             <div class="row mb-3">
                 <div class="col">
-                    <label class="form-label">Назва книги</label>
+                    <label class="form-label" th:text="#{label.book_name}"></label>
                     <input type="text" th:field="*{name}" class="form-control" />
+                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger small"></div>
                 </div>
                 <div class="col">
-                    <label class="form-label">Автор</label>
+                    <label class="form-label" th:text="#{label.author}"></label>
                     <input type="text" th:field="*{author}" class="form-control" />
+                    <div th:if="${#fields.hasErrors('author')}" th:errors="*{author}" class="text-danger small"></div>
                 </div>
             </div>
 
             <div class="row mb-3">
-                <div class="mb-3">
-                    <label class="form-label">Жанр</label>
+                <div class="col">
+                    <label class="form-label" th:text="#{label.genre}"></label>
                     <select th:field="*{genre}" class="form-select">
-                        <option value="">Оберіть жанр</option>
-                        <option th:each="g : ${genres}"
-                                th:value="${g}"
-                                th:text="${g.displayName}">
-                        </option>
+                        <option value="" th:text="#{select.choose_genre}"></option>
+                        <option th:each="g : ${genres}" th:value="${g}" th:text="#{${g.messageKey}}"></option>
                     </select>
+                    <div th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}" class="text-danger small"></div>
                 </div>
                 <div class="col">
-                    <label class="form-label">Ціна (грн)</label>
+                    <label class="form-label" th:text="#{label.price}"></label>
                     <input type="number" step="0.01" th:field="*{price}" class="form-control" />
+                    <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-danger small"></div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label" th:text="#{label.age_group}"></label>
+                    <select th:field="*{ageGroup}" class="form-select">
+                        <option value="" th:text="#{select.choose_agegroup}"></option>
+                        <option th:each="a : ${ageGroups}" th:value="${a}" th:text="#{${a.messageKey}}"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('ageGroup')}" th:errors="*{ageGroup}" class="text-danger small"></div>
+                </div>
+                <div class="col">
+                    <label class="form-label" th:text="#{label.language}"></label>
+                    <select th:field="*{language}" class="form-select">
+                        <option value="" th:text="#{select.choose_language}"></option>
+                        <option th:each="l : ${languages}" th:value="${l}" th:text="#{${l.messageKey}}"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('language')}" th:errors="*{language}" class="text-danger small"></div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label" th:text="#{label.publication_year}"></label>
+                    <input type="number" th:field="*{publicationYear}" class="form-control" />
+                </div>
+                <div th:if="${#fields.hasErrors('publicationYear')}" th:errors="*{publicationYear}" class="text-danger small"></div>
+                <div class="col">
+                    <label class="form-label" th:text="#{label.pages}"></label>
+                    <input type="number" th:field="*{pages}" class="form-control" />
+                    <div th:if="${#fields.hasErrors('pages')}" th:errors="*{pages}" class="text-danger small"></div>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Опис</label>
-                <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
+                <label class="form-label" th:text="#{label.description}"></label>
+                <textarea th:field="*{description}" class="form-control" rows="4"></textarea>
             </div>
+            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-danger small"></div>
 
-            <div class="d-flex justify-content-end">
-                <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-secondary me-2">Скасувати</a>
-                <button type="submit" class="btn btn-success">Зберегти зміни</button>
+            <div class="d-flex justify-content-end mt-4">
+                <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-secondary me-2" th:text="#{btn.cancel}"></a>
+                <button type="submit" class="btn btn-success" th:text="#{btn.save_changes}"></button>
             </div>
         </form>
     </div>

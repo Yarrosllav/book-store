@@ -1,15 +1,10 @@
 package com.epam.rd.autocode.spring.project.dto;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -19,12 +14,12 @@ public class UpdateClientDTO {
     @Email
     private String email;
 
-    @Pattern(regexp = "^$|.{6,}", message = "Пароль має бути не менше 6 символів")
+    @Pattern(regexp = "^$|.{6,}", message = "{error.validation.password_size}")
     private String password;
 
+    @NotBlank(message = "{error.validation.notblank}")
+    @Size(max = 50, message = "{error.validation.name}")
     private String name;
-    private Boolean isBlocked;
 
-    @DecimalMin(value = "0")
-    private BigDecimal balance;
+    private Boolean isBlocked;
 }

@@ -2,12 +2,13 @@ package com.epam.rd.autocode.spring.project.service.impl;
 
 import com.epam.rd.autocode.spring.project.dto.BasketDTO;
 import com.epam.rd.autocode.spring.project.dto.BasketItemDTO;
-import com.epam.rd.autocode.spring.project.exception.NotFoundException;
+import com.epam.rd.autocode.spring.project.exception.BasketItemNotFoundException;
+import com.epam.rd.autocode.spring.project.exception.BookNotFoundException;
+import com.epam.rd.autocode.spring.project.exception.ClientNotFoundException;
 import com.epam.rd.autocode.spring.project.model.Basket;
 import com.epam.rd.autocode.spring.project.model.BasketItem;
 import com.epam.rd.autocode.spring.project.model.Book;
 import com.epam.rd.autocode.spring.project.model.Client;
-import com.epam.rd.autocode.spring.project.repo.BasketItemRepository;
 import com.epam.rd.autocode.spring.project.repo.BookRepository;
 import com.epam.rd.autocode.spring.project.repo.ClientRepository;
 import com.epam.rd.autocode.spring.project.service.BasketService;
@@ -27,18 +28,16 @@ public class BasketServiceImpl implements BasketService {
 
     private final ClientRepository clientRepository;
     private final BookRepository bookRepository;
-    private final BasketItemRepository basketItemRepository;
 
     @Override
     @Transactional
     public void addBookToBasket(String clientEmail, Long bookId, Integer quantity) {
-        log.info("Adding book {} to basket for client {}", bookId, clientEmail);
 
         Client client = clientRepository.findByEmail(clientEmail)
-                .orElseThrow(() -> new NotFoundException("Client not found"));
+                .orElseThrow(ClientNotFoundException::new);
 
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NotFoundException("Book not found"));
+                .orElseThrow(BookNotFoundException::new);
 
         Basket basket = client.getBasket();
 
@@ -59,13 +58,14 @@ public class BasketServiceImpl implements BasketService {
         }
 
         clientRepository.save(client);
+
+        log.info("Client [{}] added {} book(s) with ID={} to basket", clientEmail, quantity, bookId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public BasketDTO getBasketByClientEmail(String email) {
-        log.info("Getting basket for client {}", email);
-        Client client = clientRepository.findByEmail(email).orElseThrow(NotFoundException::new);
+        Client client = clientRepository.findByEmail(email).orElseThrow(ClientNotFoundException::new);
 
         Basket basket = client.getBasket();
 
@@ -94,13 +94,34 @@ public class BasketServiceImpl implements BasketService {
     @Override
     @Transactional
     public void removeBookFromBasket(String clientEmail, Long basketItemId) {
-        log.info("Removing book {} from basket for client {}", basketItemId, clientEmail);
-
-        Client client = clientRepository.findByEmail(clientEmail).orElseThrow(NotFoundException::new);
+        Client client = clientRepository.findByEmail(clientEmail).orElseThrow(ClientNotFoundException::new);
 
         client.getBasket().getBasketItems().removeIf(item -> item.getId().equals(basketItemId));
 
         clientRepository.save(client);
 
+        log.info("Client [{}] removed item ID={} from basket", clientEmail, basketItemId);
+    }
+
+    @Override
+    @Transactional
+    public void updateQuantity(String clientEmail, Long basketItemId, Integer delta) {
+
+        Client client = clientRepository.findByEmail(clientEmail).orElseThrow(ClientNotFoundException::new);
+
+        BasketItem item = client.getBasket().getBasketItems().stream()
+                .filter(i -> i.getId().equals(basketItemId))
+                .findFirst()
+                .orElseThrow(BasketItemNotFoundException::new);
+
+        if((item.getQuantity() + delta) == 0) return;
+
+        int newQuantity = item.getQuantity() + delta;
+
+        item.setQuantity(newQuantity);
+
+        clientRepository.save(client);
+
+        log.info("Client [{}] updated quantity for item ID={} (delta: {})", clientEmail, basketItemId, delta);
     }
 }

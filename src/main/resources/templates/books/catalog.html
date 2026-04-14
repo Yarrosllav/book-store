@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Каталог книг</title>
+    <title th:text="#{catalog.title}"></title>
 </head>
 <body>
 
@@ -24,7 +24,7 @@
                 </span>
                 <input type="text" name="search" th:value="${filter.search}"
                        class="form-control border-start-0"
-                       placeholder="Пошук за назвою або автором..."/>
+                       th:placeholder="#{placeholder.search}"/>
             </div>
 
             <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1"
@@ -32,7 +32,7 @@
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
                     <path d="M2 4h12M4 8h8M6 12h4"/>
                 </svg>
-                Фільтри
+                <span th:text="#{catalog.filters}"></span>
                 <span th:if="${filter.genre != null or filter.ageGroup != null or filter.minPrice != null or filter.maxPrice != null}"
                       class="badge bg-primary rounded-pill">!</span>
             </button>
@@ -42,42 +42,42 @@
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
                     <path d="M2 5h7M2 8h5M2 11h3M11 3v10M11 13l2.5-2.5M11 13l-2.5-2.5"/>
                 </svg>
-                Сортування
+                <span th:text="#{catalog.sort}"></span>
             </button>
 
-            <button type="submit" class="btn btn-primary">Знайти</button>
-            <a th:href="@{/books}" class="btn btn-outline-secondary">Скинути</a>
+            <button type="submit" class="btn btn-primary" th:text="#{btn.search}"></button>
+            <a th:href="@{/books}" class="btn btn-outline-secondary" th:text="#{btn.reset}"></a>
         </div>
 
         <div class="collapse mb-3" id="filterPanel">
             <div class="card card-body">
                 <div class="row g-3">
                     <div class="col-md-3">
-                        <label class="form-label small text-muted">Жанр</label>
+                        <label class="form-label small text-muted" th:text="#{label.genre}"></label>
                         <select name="genre" class="form-select form-select-sm">
-                            <option value="">Всі жанри</option>
+                            <option value="" th:text="#{select.all_genres}"></option>
                             <option th:each="g : ${genres}" th:value="${g}"
-                                    th:text="${g.displayName}"
+                                    th:text="#{${g.messageKey}}"
                                     th:selected="${g == filter.genre}"></option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label small text-muted">Вікова група</label>
+                        <label class="form-label small text-muted" th:text="#{label.age_group}"></label>
                         <select name="ageGroup" class="form-select form-select-sm">
-                            <option value="">Всі групи</option>
+                            <option value="" th:text="#{select.all_groups}"></option>
                             <option th:each="ag : ${ageGroups}" th:value="${ag}"
-                                    th:text="${ag}"
+                                    th:text="#{${ag.messageKey}}"
                                     th:selected="${ag == filter.ageGroup}"></option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label small text-muted">Ціна (грн)</label>
+                        <label class="form-label small text-muted" th:text="#{label.price}"></label>
                         <div class="d-flex gap-2 align-items-center">
                             <input type="number" name="minPrice" th:value="${filter.minPrice}"
-                                   class="form-control form-control-sm" placeholder="від" min="0"/>
+                                   class="form-control form-control-sm" th:placeholder="#{placeholder.from}" min="0"/>
                             <span class="text-muted">—</span>
                             <input type="number" name="maxPrice" th:value="${filter.maxPrice}"
-                                   class="form-control form-control-sm" placeholder="до" min="0"/>
+                                   class="form-control form-control-sm" th:placeholder="#{placeholder.to}" min="0"/>
                         </div>
                     </div>
                 </div>
@@ -87,78 +87,80 @@
         <div class="collapse mb-3" id="sortPanel">
             <div class="card card-body">
                 <div class="d-flex gap-2 flex-wrap align-items-center">
-                    <span class="text-muted small">Сортувати за:</span>
+                    <span class="text-muted small" th:text="#{catalog.sort_by}"></span>
 
                     <button type="button" class="btn btn-sm"
                             th:classappend="${sortBy == 'name'} ? 'btn-primary' : 'btn-outline-secondary'"
-                            data-field="name"
-                            th:data-active="${sortBy == 'name'}"
-                            th:data-current-dir="${sortDir}"
+                            data-field="name" th:data-active="${sortBy == 'name'}" th:data-current-dir="${sortDir}"
                             onclick="applySort(this)">
-                        Назвою
+                        <span th:text="#{sort.name}"></span>
+                        <span th:if="${sortBy == 'name'}" th:text="${sortDir == 'asc'} ? '↑' : '↓'"></span>
                     </button>
                     <button type="button" class="btn btn-sm"
                             th:classappend="${sortBy == 'price'} ? 'btn-primary' : 'btn-outline-secondary'"
-                            data-field="price"
-                            th:data-active="${sortBy == 'price'}"
-                            th:data-current-dir="${sortDir}"
+                            data-field="price" th:data-active="${sortBy == 'price'}" th:data-current-dir="${sortDir}"
                             onclick="applySort(this)">
-                        Ціною
+                        <span th:text="#{sort.price}"></span>
+                        <span th:if="${sortBy == 'price'}" th:text="${sortDir == 'asc'} ? '↑' : '↓'"></span>
                     </button>
                     <button type="button" class="btn btn-sm"
                             th:classappend="${sortBy == 'author'} ? 'btn-primary' : 'btn-outline-secondary'"
-                            data-field="author"
-                            th:data-active="${sortBy == 'author'}"
-                            th:data-current-dir="${sortDir}"
+                            data-field="author" th:data-active="${sortBy == 'author'}" th:data-current-dir="${sortDir}"
                             onclick="applySort(this)">
-                        Автором
+                        <span th:text="#{sort.author}"></span>
+                        <span th:if="${sortBy == 'author'}" th:text="${sortDir == 'asc'} ? '↑' : '↓'"></span>
                     </button>
-
-                    <span th:if="${sortBy != null}" class="text-muted small ms-2"
-                          th:text="${sortDir == 'asc'} ? '↑ за зростанням' : '↓ за спаданням'"></span>
                 </div>
             </div>
         </div>
 
     </form>
 
-    <div th:if="${param.success == 'addedToBasket'}" class="alert alert-success">Книгу успішно додано в кошик!</div>
-    <div th:if="${param.success == 'deleted'}" class="alert alert-warning">Книгу видалено.</div>
+    <div th:if="${param.success == 'addedToBasket'}" class="alert alert-success" th:text="#{catalog.msg.added}"></div>
+    <div th:if="${param.success == 'deleted'}" class="alert alert-warning" th:text="#{catalog.msg.deleted}"></div>
 
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <div class="col" th:each="book : ${books}">
             <div class="card h-100 shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${book.name}">Назва книги</h5>
-                    <h6 class="card-subtitle mb-2 text-muted" th:text="${book.author}">Автор</h6>
+                    <h5 class="card-title" th:text="${book.name}"></h5>
+                    <h6 class="card-subtitle mb-2 text-muted" th:text="${book.author}"></h6>
                     <p class="card-text">
-                        <strong>Жанр:</strong> <span th:text="${book.genre.displayName}"></span><br>
-                        <strong class="text-success fs-5" th:text="${book.price} + ' грн'"></strong>
+                        <strong th:text="#{book.genre}"></strong>
+                        <span th:if="${book.genre}" th:text="#{${book.genre.messageKey}}"></span><br>
+                        <strong class="text-success fs-5" th:text="${book.price} + ' ' + #{currency.uah}"></strong>
                     </p>
                 </div>
 
                 <div class="card-footer bg-transparent">
                     <div class="d-flex justify-content-between align-items-center">
-                        <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-outline-secondary btn-sm">Деталі</a>
+                        <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-outline-secondary btn-sm" th:text="#{btn.details}"></a>
 
                         <form sec:authorize="hasRole('CLIENT')"
                               th:action="@{/basket/add/{id}(id=${book.id})}" method="post" class="d-flex">
                             <input type="number" name="quantity" value="1" min="1"
                                    class="form-control form-control-sm me-2" style="width: 60px;">
-                            <button type="submit" class="btn btn-primary btn-sm">В кошик</button>
+                            <button type="submit" class="btn btn-primary btn-sm" th:text="#{btn.add_to_basket}"></button>
                         </form>
 
                         <div sec:authorize="hasRole('EMPLOYEE')">
-                            <a th:href="@{/books/{id}/edit(id=${book.id})}" class="btn btn-warning btn-sm">Ред.</a>
+                            <a th:href="@{/books/{id}/edit(id=${book.id})}"
+                               class="btn btn-sm"
+                               style="background:transparent;border:0.5px solid #AFA9EC;color:#7F77DD;"
+                               th:text="#{btn.edit}"></a>
+
                             <form th:action="@{/books/{id}/delete(id=${book.id})}" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Видалити книгу?');">Вид.</button>
+                                        style="background:transparent;border:0.5px solid rgba(226,75,74,.5);color:#E24B4A;"
+                                        th:data-confirm-msg="#{confirm.delete_book}"
+                                        onclick="return confirm(this.getAttribute('data-confirm-msg'));"
+                                        th:text="#{btn.delete_short}"></button>
                             </form>
                         </div>
 
                         <div sec:authorize="isAnonymous()">
-                            <a th:href="@{/login}" class="btn btn-outline-primary btn-sm">Увійдіть, щоб купити</a>
+                            <a th:href="@{/login}" class="btn btn-outline-primary btn-sm" th:text="#{btn.login_to_buy}"></a>
                         </div>
                     </div>
                 </div>
@@ -171,9 +173,9 @@
 
             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/books(page=${currentPage - 1}, size=12, sortBy=${sortBy}, sortDir=${sortDir},
+                   th:href="@{/books(page=${currentPage - 1}, size=30, sortBy=${sortBy}, sortDir=${sortDir},
                                search=${filter.search},
-                               genre=${filter.genre}, ageGroup=${filter.ageGroup},
+                               genre=${filter.genre?.name()}, ageGroup=${filter.ageGroup?.name()},
                                minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}">
                     &laquo;
                 </a>
@@ -182,9 +184,9 @@
             <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                 th:classappend="${i == currentPage} ? 'active'">
                 <a class="page-link"
-                   th:href="@{/books(page=${i}, size=12, sortBy=${sortBy}, sortDir=${sortDir},
+                   th:href="@{/books(page=${i}, size=30, sortBy=${sortBy}, sortDir=${sortDir},
                                search=${filter.search},
-                               genre=${filter.genre}, ageGroup=${filter.ageGroup},
+                               genre=${filter.genre?.name()}, ageGroup=${filter.ageGroup?.name()},
                                minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}"
                    th:text="${i + 1}">
                 </a>
@@ -192,9 +194,9 @@
 
             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/books(page=${currentPage + 1}, size=12, sortBy=${sortBy}, sortDir=${sortDir},
+                   th:href="@{/books(page=${currentPage + 1}, size=30, sortBy=${sortBy}, sortDir=${sortDir},
                                search=${filter.search},
-                               genre=${filter.genre}, ageGroup=${filter.ageGroup},
+                               genre=${filter.genre?.name()}, ageGroup=${filter.ageGroup?.name()},
                                minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}">
                     &raquo;
                 </a>

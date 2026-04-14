@@ -1,10 +1,14 @@
 package com.epam.rd.autocode.spring.project.controller;
 
 import com.epam.rd.autocode.spring.project.dto.RegisterClientDTO;
-import com.epam.rd.autocode.spring.project.exception.AlreadyExistException;
+import com.epam.rd.autocode.spring.project.exception.ClientAlreadyExistsException;
 import com.epam.rd.autocode.spring.project.service.ClientService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class AuthController {
 
     private final ClientService clientService;
+    private final MessageSource messageSource;
 
     @GetMapping("/login")
     public String showLoginPage(){
@@ -31,9 +36,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerClient(
-            @Valid @ModelAttribute RegisterClientDTO clientDTO,
+            @Valid @ModelAttribute("client") RegisterClientDTO clientDTO,
             BindingResult bindingResult,
-            Model model){
+            HttpServletRequest request){
 
         if(bindingResult.hasErrors()){
             return "register";
@@ -41,11 +46,23 @@ public class AuthController {
 
         try{
             clientService.addClient(clientDTO);
-        }catch (AlreadyExistException e){
-            bindingResult.rejectValue("email", "error.client", e.getMessage());
+            request.login(clientDTO.getEmail(), clientDTO.getPassword());
+        }catch (ClientAlreadyExistsException e){
+
+            String translatedMessage = messageSource.getMessage(
+                    e.getMessage(),
+                    null,
+                    e.getMessage(),
+                    LocaleContextHolder.getLocale()
+            );
+
+            bindingResult.rejectValue("email", "error.client", translatedMessage);
+            return "register";
+        }catch(ServletException e){
+            return "redirect:/login?error=true";
         }
 
-        return "redirect:/login?success=true";
+        return "redirect:/books?success=registered";
 
     }
 

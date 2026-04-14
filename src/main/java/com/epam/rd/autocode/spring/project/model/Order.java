@@ -1,5 +1,6 @@
 package com.epam.rd.autocode.spring.project.model;
 
+import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +25,8 @@ public class Order {
     @JoinColumn(name = "employee_id")
     private Employee employee;
     private LocalDateTime orderDate;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
     private BigDecimal price;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookItem> bookItems;

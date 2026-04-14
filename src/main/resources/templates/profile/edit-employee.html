@@ -3,43 +3,47 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Редагування профілю</title>
+    <title th:text="#{profile.edit.title}"></title>
 </head>
 <body>
 <div layout:fragment="content" class="row justify-content-center">
     <div class="col-md-5">
-        <h2 class="mb-4">Редагування профілю</h2>
+        <h2 class="mb-4" th:text="#{profile.edit.header}"></h2>
 
         <form th:action="@{/profile/edit/employee}" th:object="${employeeDto}" method="post" class="card p-4 shadow-sm">
 
             <div class="mb-3">
-                <label class="form-label">Ім'я</label>
-                <input type="text" th:field="*{name}" class="form-control" />
+                <label class="form-label" th:text="#{label.name_simple}"></label>
+                <input type="text" th:field="*{name}" class="form-control" th:errorclass="is-invalid" />
+                <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger small mt-1"></div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" th:value="${employeeDto.email}" class="form-control" disabled/>
+                <label class="form-label" th:text="#{label.email_simple}"></label>
+                <input type="email" th:field="*{email}" class="form-control" readonly/>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Новий пароль (залиште пустим, якщо не міняєте)</label>
-                <input type="password" th:field="*{password}" class="form-control" />
+                <label class="form-label" th:text="#{label.new_password}"></label>
+                <input type="password" th:field="*{password}" class="form-control" th:errorclass="is-invalid" />
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger small mt-1"></div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Дата народження</label>
-                <input type="date" th:field="*{birthDate}" class="form-control" />
+                <label class="form-label" th:text="#{label.birth_date}"></label>
+                <input type="date" th:field="*{birthDate}" class="form-control" th:errorclass="is-invalid" />
+                <div th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}" class="text-danger small mt-1"></div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Телефон</label>
-                <input type="text" th:field="*{phone}" class="form-control" />
+                <label class="form-label" th:text="#{label.phone}"></label>
+                <input type="text" th:field="*{phone}" class="form-control" th:errorclass="is-invalid" />
+                <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-danger small mt-1"></div>
             </div>
 
-            <div class="d-flex justify-content-end mt-3">
-                <a th:href="@{/profile}" class="btn btn-secondary me-2">Скасувати</a>
-                <button type="submit" class="btn btn-success">Зберегти</button>
+            <div class="d-flex justify-content-end mt-4">
+                <a th:href="@{/profile}" class="btn btn-secondary me-2" th:text="#{btn.cancel}"></a>
+                <button type="submit" class="btn btn-success" th:text="#{btn.save}"></button>
             </div>
         </form>
     </div>

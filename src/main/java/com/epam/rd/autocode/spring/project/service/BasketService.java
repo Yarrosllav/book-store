@@ -7,5 +7,6 @@ public interface BasketService {
     void addBookToBasket(String clientEmail, Long bookId, Integer quantity);
     BasketDTO getBasketByClientEmail(String email);
     void removeBookFromBasket(String clientEmail, Long basketItemId);
+    void updateQuantity(String clientEmail, Long basketItemId, Integer quantity);
 
 }

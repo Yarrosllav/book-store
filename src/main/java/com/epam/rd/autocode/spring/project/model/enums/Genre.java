@@ -6,21 +6,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum Genre {
-    FICTION("Художня"),
-    NON_FICTION("Нон-фікшн"),
-    SCIENCE("Наука"),
-    HISTORY("Історія"),
-    BIOGRAPHY("Біографія"),
-    CHILDREN("Дитяча"),
-    FANTASY("Фентезі"),
-    DETECTIVE("Детектив"),
-    ROMANCE("Романтика"),
-    HORROR("Жахи"),
-    CLASSIC("Класика"),
-    POETRY("Поезія"),
-    ADVENTURE("Пригоди"),
-    PSYCHOLOGY("Психологія"),
-    PHILOSOPHY("Філософія");
+    FICTION("enum.genre.fiction"),
+    NON_FICTION("enum.genre.non_fiction"),
+    SCIENCE("enum.genre.science"),
+    HISTORY("enum.genre.history"),
+    BIOGRAPHY("enum.genre.biography"),
+    CHILDREN("enum.genre.children"),
+    FANTASY("enum.genre.fantasy"),
+    DETECTIVE("enum.genre.detective"),
+    ROMANCE("enum.genre.romance"),
+    HORROR("enum.genre.horror"),
+    CLASSIC("enum.genre.classic"),
+    POETRY("enum.genre.poetry"),
+    ADVENTURE("enum.genre.adventure"),
+    PSYCHOLOGY("enum.genre.psychology"),
+    PHILOSOPHY("enum.genre.philosophy"),;
 
-    private final String displayName;
+    private final String messageKey;
 }

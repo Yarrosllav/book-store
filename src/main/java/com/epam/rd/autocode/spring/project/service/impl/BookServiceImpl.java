@@ -2,10 +2,8 @@ package com.epam.rd.autocode.spring.project.service.impl;
 
 import com.epam.rd.autocode.spring.project.dto.BookDTO;
 import com.epam.rd.autocode.spring.project.dto.BookFilterDTO;
-import com.epam.rd.autocode.spring.project.dto.CreateBookDTO;
-import com.epam.rd.autocode.spring.project.dto.UpdateBookDTO;
-import com.epam.rd.autocode.spring.project.exception.DuplicateBookException;
-import com.epam.rd.autocode.spring.project.exception.NotFoundException;
+import com.epam.rd.autocode.spring.project.exception.BookAlreadyExistsException;
+import com.epam.rd.autocode.spring.project.exception.BookNotFoundException;
 import com.epam.rd.autocode.spring.project.model.Book;
 import com.epam.rd.autocode.spring.project.repo.BookRepository;
 import com.epam.rd.autocode.spring.project.service.BookService;
@@ -30,8 +28,6 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public Page<BookDTO> getAllBooks(BookFilterDTO filter, int page, int size, String sortBy, String sortDir) {
-        log.info("Getting all books");
-
         Sort sort = sortDir.equals("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -47,76 +43,59 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public BookDTO getBookById(Long id) {
-        log.info("Getting book by id: {}", id);
-        return mapper.map(bookRepository.findById(id).orElseThrow(NotFoundException::new), BookDTO.class);
+        return mapper.map(bookRepository.findById(id).orElseThrow(BookNotFoundException::new), BookDTO.class);
     }
 
     @Override
     @Transactional
-    public BookDTO updateBookById(Long id, UpdateBookDTO book) {
+    public BookDTO updateBookById(Long id, BookDTO bookDTO) {
+        Book bookToUpdate = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
 
-        log.info("Updating book by id: {}", id);
+        bookRepository.findByName(bookDTO.getName()).ifPresent(existingBook -> {
+            if (!existingBook.getId().equals(id) && existingBook.getAuthor().equals(bookDTO.getAuthor())) {
+                throw new BookAlreadyExistsException(bookDTO.getName(), bookDTO.getAuthor());
+            }
+        });
 
-        Book bookToUpdate = bookRepository.findById(id).orElseThrow(NotFoundException::new);
+        bookToUpdate.setName(bookDTO.getName());
+        bookToUpdate.setAuthor(bookDTO.getAuthor());
+        bookToUpdate.setGenre(bookDTO.getGenre());
+        bookToUpdate.setPrice(bookDTO.getPrice());
+        bookToUpdate.setAgeGroup(bookDTO.getAgeGroup());
+        bookToUpdate.setLanguage(bookDTO.getLanguage());
+        bookToUpdate.setPages(bookDTO.getPages());
+        bookToUpdate.setPublicationYear(bookDTO.getPublicationYear());
+        bookToUpdate.setDescription(bookDTO.getDescription());
 
-        if (book.getName() != null) {
-            bookToUpdate.setName(book.getName());
-        }
-        if (book.getCharacteristics() != null) {
-            bookToUpdate.setCharacteristics(book.getCharacteristics());
-        }
-        if (book.getPublicationDate() != null) {
-            bookToUpdate.setPublicationDate(book.getPublicationDate());
-        }
-        if (book.getGenre() != null) {
-            bookToUpdate.setGenre(book.getGenre());
-        }
-        if (book.getDescription() != null) {
-            bookToUpdate.setDescription(book.getDescription());
-        }
-        if (book.getPages() != null) {
-            bookToUpdate.setPages(book.getPages());
-        }
-        if (book.getAuthor() != null) {
-            bookToUpdate.setAuthor(book.getAuthor());
-        }
-        if (book.getPrice() != null) {
-            bookToUpdate.setPrice(book.getPrice());
-        }
-        if (book.getLanguage() != null) {
-            bookToUpdate.setLanguage(book.getLanguage());
-        }
-        if (book.getAgeGroup() != null) {
-            bookToUpdate.setAgeGroup(book.getAgeGroup());
-        }
-
+        log.info("Book ID={} successfully updated. New title: '{}'", id, bookDTO.getName());
         return mapper.map(bookToUpdate, BookDTO.class);
     }
 
     @Override
     @Transactional
-    public void deleteBook(Long id) {
-        log.info("Deleting book by id: {}", id);
+    public void archiveBook(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
+        book.setIsAvailable(false);
 
-        Book book = bookRepository.findById(id).orElseThrow(NotFoundException::new);
-
-        bookRepository.delete(book);
+        bookRepository.save(book);
+        log.info("Book ID={} has been archived (Soft Delete)", id);
     }
 
     @Override
     @Transactional
-    public BookDTO addBook(CreateBookDTO bookDTO) {
-
-        log.info("Adding book with name: {}", bookDTO.getName());
-
-        if(bookRepository.existsByName(bookDTO.getName())) {
-            throw new DuplicateBookException("Book with name " + bookDTO.getName() + " already exists");
-        }
+    public BookDTO addBook(BookDTO bookDTO) {
+        bookRepository.findByName(bookDTO.getName()).ifPresent(book -> {
+            if (book.getAuthor().equals(bookDTO.getAuthor())) {
+                throw new BookAlreadyExistsException(bookDTO.getName(), bookDTO.getAuthor());
+            }
+        });
 
         Book book = mapper.map(bookDTO, Book.class);
 
         Book savedBook = bookRepository.save(book);
 
+        log.info("New book successfully added: '{}' (Assigned ID={})", savedBook.getName(), savedBook.getId());
         return mapper.map(savedBook, BookDTO.class);
     }
+
 }
